@@ -14,6 +14,7 @@ const (
 	_getERC20BalanceByAddress   = "/%s/erc20"           // /{address}/erc20
 	_getERC20TransfersByAddress = "/%s/erc20/transfers" // /{address}/erc20/transfers
 	_getTransactionByHash       = "/transaction/%s"     // /transaction/{hash}
+	_getWalletActiveChains      = "/wallets/%s/chains"  // /wallets/{address}/chains
 )
 
 type Client struct {
@@ -141,4 +142,21 @@ func (c *Client) request(path, method string, out interface{}) error {
 	}
 
 	return json.Unmarshal(b, out)
+}
+
+func (c *Client) GetWalletActiveChains(inp *GetWalletActiveChainsInput) (*GetWalletActiveChainsResponse, error) {
+	if err := inp.Validate(); err != nil {
+		return nil, err
+	}
+
+	path := fmt.Sprintf(_getWalletActiveChains, inp.Address)
+
+	if q := inp.Query(); q != "" {
+		path = fmt.Sprintf("%s?%s", path, q)
+	}
+
+	var resp GetWalletActiveChainsResponse
+	err := c.request(path, http.MethodGet, &resp)
+
+	return &resp, err
 }

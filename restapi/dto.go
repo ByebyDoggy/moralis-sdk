@@ -258,3 +258,31 @@ func (r GetTransactionByHashInput) Query() string {
 	}
 	return values.Encode()
 }
+
+type GetWalletActiveChainsInput struct {
+	Address string
+}
+
+func (r GetWalletActiveChainsInput) Validate() error {
+	if r.Address == "" {
+		return errors.New("missing address in GetWalletActiveChainsInput")
+	}
+
+	return nil
+}
+
+func (r GetWalletActiveChainsInput) Query() string {
+	return ""
+}
+
+type GetWalletActiveChainsResponse struct {
+	Address      string        `json:"address"`
+	ActiveChains []ActiveChain `json:"active_chains"`
+}
+
+type ActiveChain struct {
+	Chain            string `json:"chain"`
+	ChainID          string `json:"chain_id"`
+	FirstTransaction string `json:"first_transaction"`
+	LastTransaction  string `json:"last_transaction"`
+}
