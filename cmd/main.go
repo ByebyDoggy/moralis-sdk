@@ -80,8 +80,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("GetWalletActiveChains (%s): %+v\n", _address, walletCreated)
+	for _, activeChain := range walletCreated.ActiveChains {
+		fmt.Printf("Chain: %s, ChainID: %s, FirstTransaction: %+v, LastTransaction: %+v\n",
+			activeChain.Chain, activeChain.ChainID, activeChain.FirstTransaction, activeChain.LastTransaction)
+	}
 
 	// respErc20Transfers, err := c.GetERC20TransfersByAddress(&moralisapi.GetERC20TransfersByAddressInput{
 	// 	Address: _address,

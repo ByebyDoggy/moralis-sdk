@@ -261,6 +261,7 @@ func (r GetTransactionByHashInput) Query() string {
 
 type GetWalletActiveChainsInput struct {
 	Address string
+	params  map[string]string
 }
 
 func (r GetWalletActiveChainsInput) Validate() error {

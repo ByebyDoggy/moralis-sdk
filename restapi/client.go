@@ -2,9 +2,11 @@ package moralisapi
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -44,7 +46,7 @@ func (c *Client) GetTransactionsByAddress(inp *GetTransactionsByAddressInput) (*
 	}
 
 	var resp GetTransactionsByAddressResponse
-	err := c.request(path, http.MethodGet, &resp)
+	err := c.request(path, http.MethodGet, nil, &resp)
 
 	return &resp, err
 }
@@ -61,7 +63,7 @@ func (c *Client) GetBalanceByAddress(inp *GetBalanceByAddressInput) (*GetBalance
 	}
 
 	var resp GetBalanceByAddressResponse
-	err := c.request(path, http.MethodGet, &resp)
+	err := c.request(path, http.MethodGet, nil, &resp)
 
 	return &resp, err
 }
@@ -78,7 +80,7 @@ func (c *Client) GetERC20BalanceByAddress(inp *GetERC20BalanceByAddressInput) ([
 	}
 
 	resp := make([]*GetERC20BalanceByAddressResponse, 0)
-	err := c.request(path, http.MethodGet, &resp)
+	err := c.request(path, http.MethodGet, nil, &resp)
 
 	return resp, err
 }
@@ -95,7 +97,7 @@ func (c *Client) GetERC20TransfersByAddress(inp *GetERC20TransfersByAddressInput
 	}
 
 	var resp GetERC20TransfersByAddressResponse
-	err := c.request(path, http.MethodGet, &resp)
+	err := c.request(path, http.MethodGet, nil, &resp)
 
 	return &resp, err
 }
@@ -112,15 +114,32 @@ func (c *Client) GetTransactionByHash(inp *GetTransactionByHashInput) (*Transact
 	}
 
 	var resp Transaction
-	err := c.request(path, http.MethodGet, &resp)
+	err := c.request(path, http.MethodGet, nil, &resp)
 
 	return &resp, err
 }
 
-func (c *Client) request(path, method string, out interface{}) error {
-	req, err := http.NewRequest(method, c.host+path, nil)
+func (c *Client) request(path, method string, params map[string]string, out interface{}) error {
+	// 1. 拼接基础 URL
+	fullURL := c.host + path
+
+	// 2. 解析 URL（处理参数前先解析，避免非法 URL 导致后续错误）
+	parsedURL, err := url.Parse(fullURL)
 	if err != nil {
-		return err
+		return errors.New("parse url failed: " + err.Error())
+	}
+
+	// 3. 正确设置 URL 参数（修改原始 URL 的 Values）
+	q := parsedURL.Query() // 获取原始 URL 的参数集合（非副本）
+	for k, v := range params {
+		q.Add(k, v) // 直接修改原始集合
+	}
+	parsedURL.RawQuery = q.Encode() // 编码并赋值回 URL
+
+	// 4. 创建 HTTP 请求
+	req, err := http.NewRequest(method, parsedURL.String(), nil)
+	if err != nil {
+		return errors.New("create request failed: " + err.Error())
 	}
 
 	req.Header.Set("X-API-Key", c.apiKey)
@@ -156,7 +175,7 @@ func (c *Client) GetWalletActiveChains(inp *GetWalletActiveChainsInput) (*GetWal
 	}
 
 	var resp GetWalletActiveChainsResponse
-	err := c.request(path, http.MethodGet, &resp)
+	err := c.request(path, http.MethodGet, inp.params, &resp)
 
 	return &resp, err
 }
