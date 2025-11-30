@@ -2,8 +2,10 @@ package moralisapi
 
 import (
 	"errors"
+	"math/big"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 type GetTransactionsByAddressInput struct {
@@ -282,9 +284,9 @@ type GetWalletActiveChainsResponse struct {
 }
 
 type TransactionDetail struct {
-	BlockNumber     string `json:"block_number"`
-	BlockTimestamp  string `json:"block_timestamp"`
-	TransactionHash string `json:"transaction_hash"`
+	BlockNumber     big.Int   `json:"block_number"`
+	BlockTimestamp  time.Time `json:"block_timestamp"`
+	TransactionHash string    `json:"transaction_hash"`
 }
 
 type ActiveChain struct {
