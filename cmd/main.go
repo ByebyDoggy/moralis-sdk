@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	moraliscloud "github.com/awsm-finance/moralis-sdk/cloud"
-	moralisapi "github.com/awsm-finance/moralis-sdk/restapi"
+	moraliscloud "github.com/ByebyDoggy/moralis-sdk/cloud"
+	moralisapi "github.com/ByebyDoggy/moralis-sdk/restapi"
 
 	"github.com/joho/godotenv"
 )
@@ -37,7 +37,7 @@ func main() {
 	}
 
 	masterKey := os.Getenv("CLOUD_MASTER_KEY")
-	if appId == "" {
+	if masterKey == "" {
 		log.Fatal("CLOUD_MASTER_KEY is empty")
 	}
 
