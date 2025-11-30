@@ -1,4 +1,4 @@
-module github.com/awsm-finance/moralis-sdk
+module github.com/ByebyDoggy/moralis-sdk
 
 go 1.18
 
