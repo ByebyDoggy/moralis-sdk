@@ -280,9 +280,15 @@ type GetWalletActiveChainsResponse struct {
 	ActiveChains []ActiveChain `json:"active_chains"`
 }
 
+type TransactionDetail struct {
+	BlockNumber     string `json:"block_number"`
+	BlockTimestamp  string `json:"block_timestamp"`
+	TransactionHash string `json:"transaction_hash"`
+}
+
 type ActiveChain struct {
-	Chain            string `json:"chain"`
-	ChainID          string `json:"chain_id"`
-	FirstTransaction string `json:"first_transaction"`
-	LastTransaction  string `json:"last_transaction"`
+	Chain            string             `json:"chain"`
+	ChainID          string             `json:"chain_id"`
+	FirstTransaction *TransactionDetail `json:"first_transaction"`
+	LastTransaction  *TransactionDetail `json:"last_transaction"`
 }
